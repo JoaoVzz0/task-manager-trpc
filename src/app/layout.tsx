@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import { Toaster } from "@/components/ui/sonner";
+import { TRPCReactProvider } from "@/trpc/client";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -37,7 +38,7 @@ export default function RootLayout({
           </div>
         </header>
         <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
-          {children}
+          <TRPCReactProvider>{children}</TRPCReactProvider>
         </main>
         {/* The app only ships a light theme, so toasts must not follow the OS dark mode. */}
         <Toaster theme="light" />

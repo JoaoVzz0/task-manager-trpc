@@ -14,7 +14,10 @@
     "check": "npm run lint && npm run typecheck && npm run test"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.105.1",
+    "@trpc/client": "^11.22.1",
     "@trpc/server": "^11.22.1",
+    "@trpc/tanstack-react-query": "^11.22.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.66.0",

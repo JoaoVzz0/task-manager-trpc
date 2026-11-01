@@ -13,12 +13,21 @@ export function createContext() {
 }
 export type Context = ReturnType<typeof createContext>;
 
+// Explicit return type: flattening an untyped ZodError infers `fieldErrors: {}`,
+// which would make the field errors unreadable on the client.
+function flattenZodError(error: ZodError): {
+  formErrors: string[];
+  fieldErrors: Record<string, string[]>;
+} {
+  return z.flattenError(error);
+}
+
 const t = initTRPC.context<Context>().create({
   // Dates (createdAt, the pagination cursor) cross the wire as real Dates.
   transformer: superjson,
   errorFormatter({ shape, error }) {
     const zodError =
-      error.cause instanceof ZodError ? z.flattenError(error.cause) : null;
+      error.cause instanceof ZodError ? flattenZodError(error.cause) : null;
     const isInternal = error.code === "INTERNAL_SERVER_ERROR";
 
     let message = shape.message;
