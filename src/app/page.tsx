@@ -1,3 +1,3 @@
 export default function Home() {
-  return <main>Task Manager</main>;
+  return <h1 className="text-2xl font-semibold">Task Manager</h1>;
 }

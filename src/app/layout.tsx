@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Task Manager",
+  title: { default: "Task Manager", template: "%s | Task Manager" },
   description: "Simple task manager built with Next.js and tRPC",
 };
 
@@ -25,9 +27,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} flex min-h-dvh flex-col antialiased`}
       >
-        {children}
+        <header className="border-b">
+          <div className="mx-auto flex h-14 w-full max-w-3xl items-center px-4">
+            <Link href="/" className="font-semibold">
+              Task Manager
+            </Link>
+          </div>
+        </header>
+        <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
+          {children}
+        </main>
+        {/* The app only ships a light theme, so toasts must not follow the OS dark mode. */}
+        <Toaster theme="light" />
       </body>
     </html>
   );
