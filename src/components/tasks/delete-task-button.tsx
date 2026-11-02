@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -62,6 +62,24 @@ export function DeleteTaskButton({
     }),
   );
 
+  // Ignores a second click before React re-renders the disabled button;
+  // otherwise both deletes go out in one batch and the second reports the
+  // task as already deleted.
+  const isDeletingRef = useRef(false);
+
+  function confirmDelete() {
+    if (isDeletingRef.current) return;
+    isDeletingRef.current = true;
+    deleteTask.mutate(
+      { id: task.id },
+      {
+        onSettled: () => {
+          isDeletingRef.current = false;
+        },
+      },
+    );
+  }
+
   return (
     <AlertDialog
       open={open}
@@ -98,7 +116,7 @@ export function DeleteTaskButton({
               // The default action closes the dialog immediately; it closes
               // on success instead.
               event.preventDefault();
-              deleteTask.mutate({ id: task.id });
+              confirmDelete();
             }}
           >
             {deleteTask.isPending && <Spinner />}
