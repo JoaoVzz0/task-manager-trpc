@@ -14,6 +14,7 @@
     "check": "npm run lint && npm run typecheck && npm run test"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.9.2",
     "@tanstack/react-query": "^5.105.1",
     "@trpc/client": "^11.22.1",
     "@trpc/server": "^11.22.1",
@@ -26,6 +27,7 @@
     "radix-ui": "^1.8.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-hook-form": "^7.91.0",
     "server-only": "^0.0.1",
     "shadcn": "^4.23.0",
     "sonner": "^2.0.8",
