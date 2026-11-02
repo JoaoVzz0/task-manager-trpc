@@ -12,8 +12,10 @@ import type { Task } from "@/lib/task.schema";
 
 type TaskCardProps = {
   task: Task;
-  // Slot for per-task controls, so this component stays presentational and the
-  // list decides which interactive pieces to render.
+  /**
+   * Slot for per-task controls, so this component stays presentational and the
+   * list decides which interactive pieces to render.
+   */
   actions?: ReactNode;
 };
 

@@ -13,14 +13,19 @@ import {
   type TaskRepository,
 } from "./task.repository";
 
-// An empty description is stored as "no description", so callers never have to
-// tell "" and undefined apart.
+/**
+ * Stores an empty description as "no description", so callers never have to
+ * tell "" and undefined apart.
+ */
 function normalizeDescription(description: string | undefined) {
   return description || undefined;
 }
 
-// Takes the repository as a parameter (not a container, just an argument) so
-// tests can run against a fresh store.
+/**
+ * Business rules for tasks: ids, timestamps, normalization and not-found errors.
+ * Takes the repository as a plain argument (no container) so tests can run
+ * against a fresh store.
+ */
 export function createTaskService(repository: TaskRepository) {
   return {
     list(input: ListTasksInput): Promise<TaskPage> {
@@ -44,7 +49,7 @@ export function createTaskService(repository: TaskRepository) {
       });
     },
 
-    // Full replacement: an omitted description clears the stored one.
+    /** Full replacement: an omitted description clears the stored one. */
     async update(input: UpdateTaskInput): Promise<Task> {
       const updated = await repository.update(input.id, {
         title: input.title,

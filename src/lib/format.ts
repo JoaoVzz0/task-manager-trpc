@@ -1,5 +1,3 @@
-// The zone is fixed on purpose: cards render on the server and hydrate in the
-// browser, and two different zones would produce a hydration mismatch.
 const dateTimeFormat = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
   month: "short",
@@ -10,6 +8,11 @@ const dateTimeFormat = new Intl.DateTimeFormat("en-US", {
   timeZoneName: "short",
 });
 
+/**
+ * Formats a date for display, always in UTC. The zone is fixed on purpose:
+ * cards render on the server and hydrate in the browser, and two different
+ * zones would produce a hydration mismatch.
+ */
 export function formatDateTime(date: Date): string {
   return dateTimeFormat.format(date);
 }

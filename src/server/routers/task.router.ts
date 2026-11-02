@@ -8,7 +8,7 @@ import {
 } from "@/lib/task.schema";
 import { publicProcedure, router } from "../trpc";
 
-// Procedures only validate input and delegate; business rules live in the service.
+/** Task procedures. They only validate input and delegate to the service. */
 export const taskRouter = router({
   list: publicProcedure
     .input(listTasksSchema)

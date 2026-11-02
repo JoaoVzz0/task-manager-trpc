@@ -2,8 +2,10 @@ import type { Task } from "@/lib/task.schema";
 
 const HOUR_MS = 60 * 60 * 1000;
 
-// Ordered newest first. 25 entries so the default page size of 10 yields three
-// pages, which makes cursor pagination visible in a demo.
+/**
+ * Ordered newest first. 25 entries so the page size of 10 yields three pages,
+ * which makes cursor pagination visible in a demo.
+ */
 const SEED_TASKS: ReadonlyArray<
   readonly [title: string, description?: string]
 > = [
@@ -76,6 +78,7 @@ const SEED_TASKS: ReadonlyArray<
   ],
 ];
 
+/** Builds the sample tasks, one hour apart, the first one created at `now`. */
 export function createSeedTasks(now: Date = new Date()): Task[] {
   return SEED_TASKS.map(([title, description], index) => {
     const createdAt = new Date(now.getTime() - index * HOUR_MS);

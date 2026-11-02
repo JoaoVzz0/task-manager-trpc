@@ -22,6 +22,7 @@ function getQueryClient(): QueryClient {
   return (browserQueryClient ??= makeQueryClient());
 }
 
+/** Gives client components React Query and a typed tRPC client. */
 export function TRPCReactProvider({ children }: { children: ReactNode }) {
   const queryClient = getQueryClient();
   const [trpcClient] = useState(() =>

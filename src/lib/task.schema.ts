@@ -6,13 +6,18 @@ export const TASK_LIMITS = {
   pageSizeMax: 50,
 } as const;
 
-// Shared by the server prefetch and the client query: both must build the exact
-// same query input, otherwise the hydrated cache key never matches and the
-// client refetches the first page.
+/**
+ * Page size of the task list. Shared by the server prefetch and the client
+ * query: both must build the exact same input, otherwise the hydrated cache key
+ * never matches and the client refetches the first page.
+ */
 export const TASKS_PAGE_SIZE = 10;
 
-// Shared by the form resolver and the router input, so the same rules run on
-// both sides. The server never trusts what the client already validated.
+/**
+ * Fields a user can write. Shared by the form resolver and the router input,
+ * so the same rules run on both sides; the server never trusts what the client
+ * already validated.
+ */
 export const taskInputSchema = z.object({
   title: z
     .string({ error: "Title is required" })
@@ -42,7 +47,9 @@ export type Task = z.infer<typeof taskSchema>;
 
 export const taskIdSchema = z.object({ id: z.uuid("Invalid task id") });
 
-// Full replacement, not a partial patch: the form always submits every field.
+/**
+ * Full replacement, not a partial patch: the form always submits every field.
+ */
 export const updateTaskSchema = taskIdSchema.extend(taskInputSchema.shape);
 export type UpdateTaskInput = z.infer<typeof updateTaskSchema>;
 

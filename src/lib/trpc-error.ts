@@ -1,7 +1,9 @@
 import { isTRPCClientError } from "@trpc/client";
 import type { AppRouter } from "@/server/routers/app.router";
 
-// Server-side validation errors, first message per field, ready for the form.
+/**
+ * Server-side validation errors, first message per field, ready for the form.
+ */
 export function getFieldErrors(error: unknown): Record<string, string> {
   if (!isTRPCClientError<AppRouter>(error)) return {};
 
@@ -16,12 +18,19 @@ export function getFieldErrors(error: unknown): Record<string, string> {
   return fieldErrors;
 }
 
+/**
+ * True when the server answered NOT_FOUND, e.g. the task was deleted in another
+ * tab.
+ */
 export function isNotFoundError(error: unknown): boolean {
   return (
     isTRPCClientError<AppRouter>(error) && error.data?.code === "NOT_FOUND"
   );
 }
 
+/**
+ * A message that is safe to show the user for any error thrown by a tRPC call.
+ */
 export function getErrorMessage(error: unknown): string {
   if (isTRPCClientError<AppRouter>(error)) {
     // No data means no HTTP response from the API (offline, server down).

@@ -6,15 +6,20 @@ import { z, ZodError } from "zod";
 import { NotFoundError } from "./errors";
 import { taskService } from "./tasks/task.service";
 
-// Procedures reach the service through the context, so tests can inject one
-// backed by a fresh store instead of the process-wide singleton.
+/**
+ * Per-request context. Procedures reach the service through it, so tests can
+ * inject one backed by a fresh store instead of the process-wide singleton.
+ */
 export function createContext() {
   return { taskService };
 }
 export type Context = ReturnType<typeof createContext>;
 
-// Explicit return type: flattening an untyped ZodError infers `fieldErrors: {}`,
-// which would make the field errors unreadable on the client.
+/**
+ * Flattens validation issues into form-friendly field errors. The explicit
+ * return type matters: flattening an untyped ZodError infers `fieldErrors: {}`,
+ * which would make the field errors unreadable on the client.
+ */
 function flattenZodError(error: ZodError): {
   formErrors: string[];
   fieldErrors: Record<string, string[]>;
@@ -48,9 +53,11 @@ const t = initTRPC.context<Context>().create({
   },
 });
 
-// Domain errors stay transport-agnostic; this is the single place that maps
-// them to semantic tRPC codes. Anything unmapped surfaces as
-// INTERNAL_SERVER_ERROR.
+/**
+ * The single place that maps domain errors to semantic tRPC codes, so domain
+ * code stays transport-agnostic. Anything unmapped surfaces as
+ * INTERNAL_SERVER_ERROR.
+ */
 const mapDomainErrors = t.middleware(async ({ next }) => {
   const result = await next();
   if (!result.ok && result.error.cause instanceof NotFoundError) {

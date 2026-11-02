@@ -10,10 +10,19 @@ export type TaskPage = {
 
 export type TaskChanges = Pick<Task, "title" | "description" | "updatedAt">;
 
-// The seam between business rules and storage. Methods are async even though
-// the in-memory store is not, so swapping in a database changes no caller.
+/**
+ * The seam between business rules and storage. Methods are async even though
+ * the in-memory store is not, so swapping in a database changes no caller.
+ */
 export interface TaskRepository {
   findById(id: string): Promise<Task | undefined>;
+  /**
+   * Returns tasks newest first, starting after `cursor`.
+   *
+   * Keyset (cursor) pagination instead of offset: inserting or deleting between
+   * page loads never duplicates or skips an item, and the cursor maps directly
+   * to `WHERE (created_at, id) < ($1, $2) ORDER BY ... LIMIT` in SQL.
+   */
   listPage(params: {
     limit: number;
     cursor?: TaskCursor | null;
@@ -23,8 +32,10 @@ export interface TaskRepository {
   delete(id: string): Promise<boolean>;
 }
 
-// Newest first. `id` breaks ties so the order is total, which is what makes a
-// cursor unambiguous when two tasks share the same createdAt.
+/**
+ * Orders newest first. `id` breaks ties so the order is total, which is what
+ * makes a cursor unambiguous when two tasks share the same createdAt.
+ */
 function compareNewestFirst(a: TaskCursor, b: TaskCursor): number {
   return (
     b.createdAt.getTime() - a.createdAt.getTime() || b.id.localeCompare(a.id)
@@ -41,9 +52,6 @@ export function createInMemoryTaskRepository(
       return tasks.get(id);
     },
 
-    // Keyset (cursor) pagination instead of offset: inserting or deleting
-    // between page loads never duplicates or skips an item, and the cursor maps
-    // directly to `WHERE (created_at, id) < ($1, $2) ORDER BY ... LIMIT` in SQL.
     async listPage({ limit, cursor }) {
       const sorted = [...tasks.values()].sort(compareNewestFirst);
       const remaining = cursor
@@ -84,12 +92,16 @@ export function createInMemoryTaskRepository(
   };
 }
 
-// Next.js re-evaluates modules on HMR and can load this one in more than one
-// module graph (route handler vs. server components). A module-level singleton
-// would then give each graph its own empty store; globalThis is shared by all.
 const globalStore = globalThis as typeof globalThis & {
   __taskRepository?: TaskRepository;
 };
 
+/**
+ * The process-wide store, seeded with sample tasks.
+ *
+ * Kept on globalThis because Next.js re-evaluates modules on HMR and can load
+ * this one in more than one module graph (route handler vs. server components).
+ * A module-level singleton would give each graph its own empty store.
+ */
 export const taskRepository: TaskRepository = (globalStore.__taskRepository ??=
   createInMemoryTaskRepository(createSeedTasks()));

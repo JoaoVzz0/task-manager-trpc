@@ -5,6 +5,10 @@ import type { AppRouter } from "@/server/routers/app.router";
 
 const MAX_RETRIES = 2;
 
+/**
+ * Creates a QueryClient with the app defaults: one per request on the server,
+ * one per tab in the browser.
+ */
 export function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
