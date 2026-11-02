@@ -9,13 +9,15 @@ import { TaskCard } from "@/components/tasks/task-card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { useOnInView } from "@/hooks/use-on-in-view";
 import { TASKS_PAGE_SIZE } from "@/lib/task.schema";
 import { getErrorMessage } from "@/lib/trpc-error";
 import { useTRPC } from "@/trpc/client";
 
 /**
- * Task list with cursor pagination, rendered from the cache the page
- * prefetched.
+ * Task list with infinite scroll, rendered from the cache the page prefetched.
+ * The next page loads as the "Load more" button nears the viewport; the button
+ * stays clickable for keyboard users and as a fallback.
  */
 export function TaskList() {
   const trpc = useTRPC();
@@ -33,6 +35,25 @@ export function TaskList() {
       { limit: TASKS_PAGE_SIZE },
       { getNextPageParam: (lastPage) => lastPage.nextCursor },
     ),
+  );
+
+  // By default fetchNextPage cancels and restarts a fetch already in flight.
+  // The scroll trigger and a click can both fire before React re-renders, so
+  // a repeated call must join the running fetch instead.
+  const loadNextPage = () => fetchNextPage({ cancelRefetch: false });
+
+  const loadMoreRef = useOnInView<HTMLButtonElement>(
+    () => {
+      // After a failure, only the user retries.
+      if (hasNextPage && !isFetchNextPageError) void loadNextPage();
+    },
+    {
+      // Starts loading a little before the button is reached.
+      rootMargin: "200px",
+      // Re-checks after each page renders, so a button still in view (a tall
+      // screen) keeps loading until the screen is filled.
+      resetKey: data.pages.length,
+    },
   );
 
   const tasks = data.pages.flatMap((page) => page.items);
@@ -76,7 +97,7 @@ export function TaskList() {
               variant="outline"
               size="sm"
               className="mt-2"
-              onClick={() => fetchNextPage()}
+              onClick={loadNextPage}
               disabled={isFetchingNextPage}
             >
               {isFetchingNextPage && <Spinner />}
@@ -86,9 +107,10 @@ export function TaskList() {
         </Alert>
       ) : hasNextPage ? (
         <Button
+          ref={loadMoreRef}
           variant="ghost"
           className="justify-self-center"
-          onClick={() => fetchNextPage()}
+          onClick={loadNextPage}
           disabled={isFetchingNextPage}
         >
           {isFetchingNextPage ? (
