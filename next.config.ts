@@ -10,6 +10,10 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // The Docker build sets NEXT_OUTPUT=standalone to ship only the files the
+  // server actually uses. Everywhere else the default output is kept, because
+  // `next start` (npm start, the E2E suite) does not support standalone.
+  output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
   // Do not advertise the framework in every response.
   poweredByHeader: false,
   async headers() {

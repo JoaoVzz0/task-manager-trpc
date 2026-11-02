@@ -1,0 +1,8 @@
+# Optional way to run the app without a local Node.js install.
+# Tasks live in memory, so they reset whenever the container restarts.
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

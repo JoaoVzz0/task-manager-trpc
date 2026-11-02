@@ -1,0 +1,11 @@
+.git
+.next
+node_modules
+.claude
+.env*
+coverage
+test-results
+playwright-report
+blob-report
+npm-debug.log*
+.DS_Store
