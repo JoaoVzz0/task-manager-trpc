@@ -26,10 +26,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} flex min-h-dvh flex-col antialiased`}
-      >
+    // The font variables go on <html>, not <body>: the base styles apply
+    // `font-sans` to <html>, and a CSS variable only exists below the element
+    // that defines it.
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className="flex min-h-dvh flex-col antialiased">
         <header className="border-b">
           <div className="mx-auto flex h-14 w-full max-w-3xl items-center px-4">
             <Link href="/" className="font-semibold">
