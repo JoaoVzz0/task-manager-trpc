@@ -1,7 +1,8 @@
 "use client";
 
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Pencil } from "lucide-react";
+import Link from "next/link";
 import { DeleteTaskButton } from "@/components/tasks/delete-task-button";
 import { EmptyState } from "@/components/tasks/empty-state";
 import { TaskCard } from "@/components/tasks/task-card";
@@ -43,7 +44,22 @@ export function TaskList() {
       <ul className="grid gap-4">
         {tasks.map((task) => (
           <li key={task.id}>
-            <TaskCard task={task} actions={<DeleteTaskButton task={task} />} />
+            <TaskCard
+              task={task}
+              actions={
+                <div className="flex gap-1">
+                  <Button variant="ghost" size="icon" asChild>
+                    <Link
+                      href={`/tasks/${task.id}/edit`}
+                      aria-label={`Edit "${task.title}"`}
+                    >
+                      <Pencil />
+                    </Link>
+                  </Button>
+                  <DeleteTaskButton task={task} />
+                </div>
+              }
+            />
           </li>
         ))}
       </ul>

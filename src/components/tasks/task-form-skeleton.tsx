@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/page-header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -19,5 +20,18 @@ export function TaskFormSkeleton() {
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+/**
+ * Full-page loading state shared by the create and edit routes. The header
+ * shows the real title, so nothing jumps when the form arrives.
+ */
+export function TaskFormPageSkeleton({ title }: { title: string }) {
+  return (
+    <div className="grid gap-6">
+      <PageHeader title={title} />
+      <TaskFormSkeleton />
+    </div>
   );
 }
