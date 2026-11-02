@@ -2,6 +2,7 @@
 
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { AlertCircle } from "lucide-react";
+import { DeleteTaskButton } from "@/components/tasks/delete-task-button";
 import { EmptyState } from "@/components/tasks/empty-state";
 import { TaskCard } from "@/components/tasks/task-card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -42,7 +43,7 @@ export function TaskList() {
       <ul className="grid gap-4">
         {tasks.map((task) => (
           <li key={task.id}>
-            <TaskCard task={task} />
+            <TaskCard task={task} actions={<DeleteTaskButton task={task} />} />
           </li>
         ))}
       </ul>
